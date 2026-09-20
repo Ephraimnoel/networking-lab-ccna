@@ -1,41 +1,51 @@
-# Evidence Guide
+# Laboratory Evidence & Verification Repository
 
-**Status: Planned — no evidence has been uploaded yet**
+**Status: Structure Established — Evidence Pending Lab Execution**
 
-This directory will contain or reference evidence generated while completing the lab. Evidence must be truthful, reproducible, and connected to a documented task.
+This directory stores authentic technical artifacts generated during the completion of the CCNA Networking Lab exercises in Cisco Packet Tracer.
 
-## Evidence to capture eventually
+---
 
-- Packet Tracer `.pkt` file
-- Network topology screenshot
-- VLAN verification output
-- Trunk verification output
-- Routing/interface verification output
-- DHCP pool and binding evidence
-- Ping and connectivity tests
-- Deliberate-fault troubleshooting evidence
-- Before/after screenshots
-- Updated network diagram
-- Final report references
-
-## Evidence naming suggestion
+## 1. Evidence Directory Structure
 
 ```text
-01-topology.png
-02-vlan-verification.txt
-03-trunk-verification.txt
-04-routing-verification.txt
-05-dhcp-verification.txt
-06-baseline-connectivity.txt
-07-fault-01-before-after.png
+evidence/
+├── README.md               # Evidence policies, naming conventions, and integrity standards
+├── screenshots/            # Topology screenshots, ping outputs, verification displays
+│   └── .gitkeep
+├── configs/                # Sanitized running configurations captured post-lab
+│   └── .gitkeep
+└── logs/                   # Raw command outputs, verification tables, troubleshooting logs
+    └── .gitkeep
 ```
 
-Use names that make the evidence easy to map to the checklist and lab files. Add a short note beside each artifact explaining when and why it was captured.
+---
 
-## Security and privacy
+## 2. File Naming Standard
 
-Do not upload passwords, enable secrets, tokens, personal information, private addresses from a real environment, or other sensitive data. This is a fictional lab; use only sanitized, lab-generated evidence.
+Artifacts must follow a standardized naming convention mapped directly to the lab sequence:
 
-## Authenticity rule
+* **Screenshots:**
+  * `01-topology-initial-switching.png`
+  * `02-vlan-trunk-verification.png`
+  * `03-roas-routing-table.png`
+  * `04-dhcp-lease-binding.png`
+  * `05-fault-01-before-after.png`
+  * `06-port-security-violation.png`
+* **Configuration Files:**
+  * `SW1-baseline-sanitized.txt`
+  * `SW1-security-hardened-sanitized.txt`
+  * `R1-baseline-sanitized.txt`
+* **Verification Logs:**
+  * `02-vlan-brief.log`
+  * `02-interfaces-trunk.log`
+  * `03-ip-route.log`
+  * `04-dhcp-bindings.log`
+  * `ping-matrix-verification.log`
 
-Do not create screenshots, logs, command output, or test results just to make the repository look complete. If an activity has not been performed, leave it marked Planned or In Progress and explain what remains.
+---
+
+## 3. Data Sanitization & Authenticity Standard
+
+1. **Zero Credential Exposure:** Passwords, enable secrets, RSA private keys, or personal tokens must be redacted or sanitized prior to committing.
+2. **Authenticity Guarantee:** No placeholder logs or simulated terminal captures may be committed as "proof." Artifacts are uploaded strictly after personal execution in Cisco Packet Tracer.

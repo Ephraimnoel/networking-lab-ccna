@@ -1,68 +1,43 @@
-# Lab 05 — Troubleshooting Deliberate Faults
+# Lab 05 — Controlled Fault Troubleshooting Exercises
 
-**Status: Planned**
+**Status: Planned / Simulation Ready**  
+*Simulator: Cisco Packet Tracer*
 
-## Objective
+---
 
-Practice a structured troubleshooting process by introducing and investigating three controlled configuration faults after the baseline network works.
+## 1. Objective
+Practice hypothesis-driven troubleshooting by deliberately introducing, diagnosing, isolating, and rectifying three controlled network faults across Layer 2 switching, trunking, and Layer 3 routing.
 
-## Scenario
+## 2. Prerequisites
+* Labs 01 through 04 completed with working baseline saved as `Northstar-Baseline.pkt`.
+* Review Troubleshooting Framework in [`docs/troubleshooting-log.md`](../docs/troubleshooting-log.md).
 
-A support technician receives reports that some users cannot communicate. The technician must gather evidence, isolate the fault, correct it, and verify the result.
+## 3. Controlled Exercises
 
-## Prerequisites
+### Exercise 5.1: Diagnosing Access Port VLAN Misconfiguration
+* **Injected Fault:** Switchport `Fa0/2` reassigned to VLAN 20.
+* **Testing Protocol:**
+  1. Record symptoms from `Admin-PC1`.
+  2. Follow OSI Layer 2 diagnosis (`show mac address-table`, `show vlan brief`).
+  3. Correct configuration.
+  4. Verify resolution and log in [`docs/troubleshooting-log.md`](../docs/troubleshooting-log.md).
 
-- Baseline network completed and evidence saved
-- A clean backup of the working `.pkt` file exists
-- [`docs/troubleshooting-log.md`](../docs/troubleshooting-log.md) reviewed
+### Exercise 5.2: Diagnosing Trunk Pruning Omission
+* **Injected Fault:** Trunk allowed VLAN list restricted to omit VLAN 30.
+* **Testing Protocol:**
+  1. Record symptom of IT host inability to reach default gateway.
+  2. Inspect trunk status on switch (`show interfaces trunk`).
+  3. Restore VLAN 30 to allowed list.
+  4. Verify ping restoration and log findings.
 
-## Tasks to perform
+### Exercise 5.3: Diagnosing Subinterface Encapsulation Mismatch
+* **Injected Fault:** Router subinterface `g0/0.20` encapsulation altered to `dot1Q 25`.
+* **Testing Protocol:**
+  1. Observe that same-VLAN switching works, but gateway ping fails.
+  2. Inspect router running-configuration for subinterface `g0/0.20`.
+  3. Correct encapsulation tag to match VLAN 20.
+  4. Verify inter-VLAN routing restoration.
 
-1. Save a known-good copy before changing anything.
-2. Introduce only one planned fault at a time.
-3. Record the observed symptom without assuming the cause.
-4. Form an initial hypothesis.
-5. Run appropriate show commands and connectivity tests.
-6. Record evidence and identify the root cause.
-7. Apply a correction and verify the result.
-8. Restore or preserve the final intended configuration.
-9. Repeat for the remaining two faults.
-
-## Planned faults
-
-- Fault #1: incorrect VLAN assignment on an endpoint access port.
-- Fault #2: incorrect or incomplete trunk configuration.
-- Fault #3: incorrect host IP address or default gateway.
-
-These faults are planned scenarios, not completed incidents. Their symptoms and outcomes must be filled in only after you perform them.
-
-## Commands/concepts to investigate
-
-- `show vlan brief`
-- `show interfaces trunk`
-- `show interfaces status`
-- `show ip interface brief`
-- `show ip route`
-- `ping`
-- `traceroute`
-- OSI-layer isolation and hypothesis-driven troubleshooting
-
-## Expected outcome
-
-You should produce three evidence-backed investigation records. Do not assume that the expected fault is the actual root cause until tests support it.
-
-## Evidence to capture
-
-- Pre-fault baseline
-- Symptom or failed test
-- Diagnostic commands and outputs
-- Corrective change
-- Post-correction verification
-- Completed troubleshooting record
-
-## Completion criteria
-
-- All three faults were introduced personally after baseline validation.
-- Each fault has a complete investigation record.
-- Root cause is supported by evidence.
-- Corrective action and verification are documented.
+## 4. Required Evidence Artifacts
+* Pre-fix and post-fix command outputs for each fault.
+* Completed investigation log entries in [`docs/troubleshooting-log.md`](../docs/troubleshooting-log.md).

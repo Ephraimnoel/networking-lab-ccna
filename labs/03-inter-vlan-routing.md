@@ -1,53 +1,70 @@
-# Lab 03 — Inter-VLAN Routing
+# Lab 03 — Inter-VLAN Routing (Router-on-a-Stick)
 
-**Status: Planned**
+**Status: Planned / Simulation Ready**  
+*Simulator: Cisco Packet Tracer*
 
-## Objective
+---
 
-Provide Layer 3 routing between the planned department VLANs using a design you understand and can explain.
+## 1. Objective
+Configure Router-on-a-Stick (ROAS) on `Northstar-R1` using 802.1Q subinterfaces, assign default gateways for all departmental VLANs and the management segment, and verify routed cross-VLAN communication.
 
-## Scenario
+## 2. Prerequisites
+* Lab 02 completed and verified.
+* Addressing plan reviewed ([`docs/ip-addressing-plan.md`](../docs/ip-addressing-plan.md)).
 
-Departments need controlled communication through a router or Layer 3 switching design rather than direct Layer 2 adjacency.
+## 3. Guided Implementation Tasks
 
-## Prerequisites
+### Task 3.1: Physical Uplink Enablement
+On `Northstar-R1`:
+```cisco
+enable
+configure terminal
+hostname Northstar-R1
+interface GigabitEthernet0/0
+ description TRUNK_UPLINK_TO_SW1
+ no ip address
+ no shutdown
+exit
+```
 
-- VLANs and trunking completed and verified
-- Proposed gateways reviewed
-- Routing design selected and documented
+### Task 3.2: Subinterface Configuration & 802.1Q Encapsulation
+```cisco
+! Administration Gateway
+interface GigabitEthernet0/0.10
+ description DEFAULT_GATEWAY_VLAN10_ADMIN
+ encapsulation dot1Q 10
+ ip address 10.10.10.1 255.255.255.224
+exit
 
-## Tasks to perform
+! Finance Gateway
+interface GigabitEthernet0/0.20
+ description DEFAULT_GATEWAY_VLAN20_FINANCE
+ encapsulation dot1Q 20
+ ip address 10.10.20.1 255.255.255.240
+exit
 
-1. Choose and document router-on-a-stick or another supported Packet Tracer design.
-2. Configure the Layer 3 interfaces or subinterfaces.
-3. Assign the planned gateway addresses.
-4. Confirm interface status and routing information.
-5. Test connectivity within and between VLANs.
-6. Record whether the final policy allows all inter-VLAN traffic or requires restrictions.
+! IT Gateway
+interface GigabitEthernet0/0.30
+ description DEFAULT_GATEWAY_VLAN30_IT
+ encapsulation dot1Q 30
+ ip address 10.10.30.1 255.255.255.224
+exit
 
-## Commands/concepts to investigate
+! Management Native Gateway
+interface GigabitEthernet0/0.99
+ description DEFAULT_GATEWAY_VLAN99_MGMT
+ encapsulation dot1Q 99 native
+ ip address 10.10.99.1 255.255.255.240
+exit
+```
 
-- `show ip interface brief`
-- `show ip route`
-- `show interfaces`
-- `encapsulation dot1q`
-- Default gateways and routing-table entries
+## 4. Expected Outcomes & Verification
+1. `show ip interface brief` on `Northstar-R1` confirms all subinterfaces are `Status: Up`, `Protocol: Up`.
+2. `show ip route` shows directly connected routes for `10.10.10.0/27`, `10.10.20.0/28`, `10.10.30.0/27`, and `10.10.99.0/28`.
+3. Ping from `Admin-PC1` to default gateway `10.10.10.1` succeeds.
+4. Ping from `Admin-PC1` to `Finance-PC1` (`10.10.20.10`) succeeds via Layer 3 routing.
 
-## Expected outcome
-
-Hosts should be able to reach permitted networks through the configured gateways after implementation. Do not claim this outcome before testing it.
-
-## Evidence to capture
-
-- Interface status
-- Routing table
-- Gateway configuration evidence
-- Ping or other test results
-- Updated architecture diagram
-
-## Completion criteria
-
-- Routing design is documented.
-- Gateway interfaces were configured and verified.
-- Inter-VLAN tests were personally performed.
-- Actual results are added to the final report.
+## 5. Required Evidence Artifacts
+* Command text log: `show ip route` on router.
+* Command text log: `show ip interface brief` on router.
+* ICMP test log: Successful cross-VLAN ping and traceroute demonstrating hop through `10.10.10.1`.

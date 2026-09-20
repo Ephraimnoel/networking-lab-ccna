@@ -1,36 +1,31 @@
-# Diagrams
+# Network Topology & Visual Assets
 
-**Status: Planned architecture — not an implementation record**
+**Status: Planned Architecture / Design Documentation**
 
-Create the final diagram after building the topology. The diagram below describes the intended structure only:
+This directory houses the logical architecture, diagram source files, and visual exports for the CCNA Networking Lab project.
 
-```text
-Internet / simulated edge
-          |
-        Router
-          |
-  Core / distribution switch
-      /        |        \
- Admin VLAN  Finance VLAN  IT VLAN
+---
+
+## Architecture Diagram
+
+The logical network architecture is documented in detail in [`network-topology.md`](network-topology.md).
+
+```mermaid
+graph LR
+    WAN["Simulated WAN<br/>192.0.2.1/30"] --- R1["Router: Northstar-R1<br/>(ROAS Gateway)"]
+    R1 ===|802.1Q Trunk| SW1["Switch: Northstar-SW1<br/>(Catalyst 2960)"]
+    SW1 --- V10["VLAN 10: Admin<br/>10.10.10.0/27"]
+    SW1 --- V20["VLAN 20: Finance<br/>10.10.20.0/28"]
+    SW1 --- V30["VLAN 30: IT<br/>10.10.30.0/27"]
+    SW1 -.- V99["VLAN 99: Mgmt SVI<br/>10.10.99.0/28"]
 ```
 
-## Final diagram requirements
+---
 
-The completed diagram should show:
+## Included Files & Asset Guidelines
 
-- Internet or simulated edge, clearly labeled as simulated if applicable
-- Router and switch roles
-- Trunk links
-- VLAN IDs and names
-- Department segments
-- Representative endpoints
-- Subnets or gateway addresses where helpful
-- A legend and a note that the design is a Packet Tracer lab
+* [`network-topology.md`](network-topology.md) — Comprehensive technical breakdown of the Layer 2/3 topology, interface assignments, and broadcast domains.
+* `network-topology.drawio` *(Planned)* — Editable XML source file created in diagrams.net / draw.io.
+* `network-topology.png` *(Planned)* — High-resolution exported image for external documentation and PDF reports.
 
-## Suggested files
-
-- `network-topology.drawio` — editable source
-- `network-topology.png` — exported image for the README
-- `final-architecture-notes.md` — explanation of design choices
-
-Do not label the planned diagram as a completed network. Update the status only after the topology has actually been built and the diagram matches the tested implementation.
+> **Authenticity Note:** The diagram above reflects the planned engineering design. When Packet Tracer topology files (`.pkt`) and screenshots are produced during lab execution, corresponding screenshots will be added to `evidence/screenshots/`.

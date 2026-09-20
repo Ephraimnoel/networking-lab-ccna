@@ -1,52 +1,68 @@
-# Lab 04 — DHCP
+# Lab 04 — Dynamic Host Configuration Protocol (DHCP)
 
-**Status: Planned**
+**Status: Planned / Simulation Ready**  
+*Simulator: Cisco Packet Tracer*
 
-## Objective
+---
 
-Provide dynamic IPv4 addressing to department endpoints and verify that leases match the planned network design.
+## 1. Objective
+Configure centralized Cisco IOS DHCP services on `Northstar-R1`, configure address exclusion ranges for infrastructure reservations, set default gateway and DNS options per scope, and verify dynamic client lease acquisition.
 
-## Scenario
+## 2. Prerequisites
+* Lab 03 completed (routing operational).
+* IP addressing plan reviewed ([`docs/ip-addressing-plan.md`](../docs/ip-addressing-plan.md)).
 
-A small IT team wants to reduce manual endpoint configuration while keeping gateway and address assignments documented.
+## 3. Guided Implementation Tasks
 
-## Prerequisites
+### Task 3.1: Configure Address Exclusions (Static IP Protection)
+On `Northstar-R1`:
+```cisco
+enable
+configure terminal
 
-- VLANs and inter-VLAN routing implemented and verified
-- Addressing plan validated
-- Infrastructure reservations identified
+! Exclude Gateways and Static Reservations
+ip dhcp excluded-address 10.10.10.1 10.10.10.9
+ip dhcp excluded-address 10.10.20.1 10.10.20.4
+ip dhcp excluded-address 10.10.30.1 10.10.30.9
+```
 
-## Tasks to perform
+### Task 3.2: Configure Departmental DHCP Pools
+```cisco
+! Administration Scope
+ip dhcp pool ADMIN_POOL
+ network 10.10.10.0 255.255.255.224
+ default-router 10.10.10.1
+ dns-server 1.1.1.1
+exit
 
-1. Decide where DHCP will be provided in the simulated design.
-2. Create one scope per required department network.
-3. Exclude or reserve infrastructure addresses as appropriate.
-4. Configure clients to obtain addresses dynamically.
-5. Verify assigned addresses, masks, gateways, and DNS settings.
-6. Test renewal or re-acquisition behavior where supported.
+! Finance Scope
+ip dhcp pool FINANCE_POOL
+ network 10.10.20.0 255.255.255.240
+ default-router 10.10.20.1
+ dns-server 1.1.1.1
+exit
 
-## Commands/concepts to investigate
+! IT Scope
+ip dhcp pool IT_POOL
+ network 10.10.30.0 255.255.255.224
+ default-router 10.10.30.1
+ dns-server 1.1.1.1
+exit
+```
 
-- DHCP scope, pool, exclusion, lease, and relay concepts
-- `show ip dhcp binding`
-- `show ip dhcp pool`
-- `show ip interface brief`
-- Client IP configuration tools in Packet Tracer
+### Task 3.3: Client Verification & Lease Testing
+1. On each endpoint PC (`Admin-PC1`, `Finance-PC1`, `IT-PC1`), switch IP configuration from Static to DHCP.
+2. Confirm that each host obtains:
+   * Correct subnet IP within designated lease range.
+   * Correct subnet mask.
+   * Correct default gateway.
+   * Correct DNS server.
 
-## Expected outcome
+## 4. Expected Outcomes & Verification
+1. `show ip dhcp binding` on `Northstar-R1` lists dynamic bindings with client MAC addresses.
+2. `show ip dhcp pool` shows pool utilization and lease counts.
+3. Endpoints maintain full internal and cross-VLAN network communication using dynamic leases.
 
-Clients should receive addresses from the correct planned subnet after implementation. The actual lease results must be captured.
-
-## Evidence to capture
-
-- DHCP configuration evidence
-- Binding/lease output
-- Client IP configuration screenshots
-- Connectivity tests using assigned addresses
-
-## Completion criteria
-
-- Each required scope was configured personally.
-- At least one client per relevant VLAN was tested.
-- Lease and gateway results were documented.
-- No credentials or sensitive information were published.
+## 5. Required Evidence Artifacts
+* Router output: `show ip dhcp binding`.
+* Endpoint screenshots/logs: `ipconfig /all` displaying dynamic lease parameters.

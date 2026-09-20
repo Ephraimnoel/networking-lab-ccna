@@ -1,53 +1,88 @@
-# Lab 02 — VLANs and Trunks
+# Lab 02 — VLAN Segmentation & 802.1Q Trunks
 
-**Status: Planned**
+**Status: Planned / Simulation Ready**  
+*Simulator: Cisco Packet Tracer*
 
-## Objective
+---
 
-Create department VLANs, assign access ports, and configure a trunk for links that carry multiple VLANs.
+## 1. Objective
+Create departmental VLANs (10, 20, 30, 99, 999), assign access ports, configure an 802.1Q trunk link to the router uplink, reassign the native VLAN, and verify that cross-VLAN traffic is blocked at Layer 2.
 
-## Scenario
+## 2. Prerequisites
+* Lab 01 completed.
+* VLAN Plan reviewed ([`docs/vlan-plan.md`](../docs/vlan-plan.md)).
 
-Administration, Finance, and IT endpoints must be logically separated even when they share switching infrastructure.
+## 3. Guided Implementation Tasks
 
-## Prerequisites
+### Task 3.1: VLAN Database Creation
+On `Northstar-SW1`:
+```cisco
+enable
+configure terminal
+vlan 10
+ name ADMIN
+vlan 20
+ name FINANCE
+vlan 30
+ name IT
+vlan 99
+ name MGMT_NATIVE
+vlan 999
+ name BLACKHOLE
+exit
+```
 
-- Lab 01 topology built and understood
-- VLAN plan reviewed
-- Port roles identified
+### Task 3.2: Access Port Assignment & DTP Disabling
+```cisco
+interface range FastEthernet0/2 - 5
+ description ACCESS_ADMIN_VLAN10
+ switchport mode access
+ switchport access vlan 10
+ switchport nonegotiate
+exit
 
-## Tasks to perform
+interface range FastEthernet0/6 - 10
+ description ACCESS_FINANCE_VLAN20
+ switchport mode access
+ switchport access vlan 20
+ switchport nonegotiate
+exit
 
-1. Create VLANs 10, 20, and 30; decide whether VLAN 99 is required.
-2. Name VLANs according to the VLAN plan.
-3. Assign selected endpoint ports as access ports.
-4. Configure the inter-switch or switch-router link as a trunk where required.
-5. Verify VLAN membership and trunk status.
-6. Test expected same-VLAN and blocked cross-VLAN behavior before routing is added.
+interface range FastEthernet0/11 - 15
+ description ACCESS_IT_VLAN30
+ switchport mode access
+ switchport access vlan 30
+ switchport nonegotiate
+exit
+```
 
-## Commands/concepts to investigate
+### Task 3.3: 802.1Q Trunk Configuration & Native VLAN Reassignment
+```cisco
+interface FastEthernet0/1
+ description UPLINK_TO_ROUTER_R1
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport nonegotiate
+exit
+```
 
-- `show vlan brief`
-- `show interfaces trunk`
-- `switchport mode access`
-- `switchport access vlan`
-- `switchport mode trunk`
-- 802.1Q tags, native VLAN, access versus trunk mode
+### Task 3.4: Switch Virtual Interface (SVI) Management IP
+```cisco
+interface Vlan99
+ description MANAGEMENT_SVI
+ ip address 10.10.99.2 255.255.255.240
+ no shutdown
+exit
+ip default-gateway 10.10.99.1
+```
 
-## Expected outcome
+## 4. Expected Outcomes & Verification
+1. `show vlan brief` confirms correct naming and port memberships.
+2. `show interfaces trunk` confirms `Fa0/1` is in trunk mode with Native VLAN 99 and allowed VLANs `10, 20, 30, 99`.
+3. **Cross-VLAN Isolation Test:** A ping from `Admin-PC1` (`10.10.10.10` in VLAN 10) to `Finance-PC1` (`10.10.20.10` in VLAN 20) **must fail** because routing has not yet been introduced.
 
-Department ports should be associated with the intended VLANs, and the required trunk should carry the intended VLANs. Actual success must be verified and documented.
-
-## Evidence to capture
-
-- VLAN table output
-- Trunk output
-- Port assignment table
-- Screenshot of the topology
-- Connectivity tests performed before routing
-
-## Completion criteria
-
-- VLANs and port assignments were configured personally.
-- Trunk behavior was verified.
-- Any unexpected behavior was documented rather than hidden.
+## 5. Required Evidence Artifacts
+* Command text output: `show vlan brief`.
+* Command text output: `show interfaces trunk`.
+* Command text output: Negative ping test showing cross-VLAN broadcast containment.
