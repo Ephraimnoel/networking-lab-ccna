@@ -1,0 +1,144 @@
+! ==============================================================
+! NORTHSTAR SERVICES - ACCESS/CORE SWITCH CONFIGURATION
+! Device: Cisco Catalyst 2960-24TT
+! Hostname: Northstar-SW1
+! Purpose: Layer 2 Segmentation, 802.1Q Trunking & Port Hardening
+! Environment: Cisco Packet Tracer Simulation
+! ==============================================================
+
+enable
+configure terminal
+
+! --- Basic Device Identity & Security ---
+hostname Northstar-SW1
+no ip domain-lookup
+service password-encryption
+enable secret LabEnableSecret123!
+
+! --- Security Warning Banner ---
+banner motd #
+=============================================================
+[!] NORTHSTAR SERVICES - RESTRICTED ACCESS ONLY
+Unauthorized access or usage is strictly prohibited.
+All network activities are logged and monitored.
+=============================================================
+#
+
+! --- Management Plane Hardening (SSHv2 & Local Auth) ---
+ip domain-name northstar.local
+crypto key generate rsa modulus 2048
+ip ssh version 2
+ip ssh time-out 60
+ip ssh authentication-retries 2
+
+username admin privilege 15 secret LabAdminSecret123!
+
+! --- Console & VTY Line Protections ---
+line con 0
+ login local
+ exec-timeout 5 0
+ logging synchronous
+exit
+
+line vty 0 4
+ transport input ssh
+ login local
+ exec-timeout 5 0
+ logging synchronous
+exit
+
+line vty 5 15
+ transport input ssh
+ login local
+ exec-timeout 5 0
+exit
+
+! --- VLAN Database Definition ---
+vlan 10
+ name ADMIN
+exit
+
+vlan 20
+ name FINANCE
+exit
+
+vlan 30
+ name IT
+exit
+
+vlan 99
+ name MGMT_NATIVE
+exit
+
+vlan 999
+ name BLACKHOLE
+exit
+
+! --- 802.1Q Trunk Uplink to Router (Fa0/1) ---
+interface FastEthernet0/1
+ description TRUNK_UPLINK_TO_ROUTER_R1_G0_0
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,20,30,99
+ switchport nonegotiate
+exit
+
+! --- Departmental Access Ports: VLAN 10 (Admin) ---
+interface range FastEthernet0/2 - 5
+ description ACCESS_ADMIN_WORKSTATIONS
+ switchport mode access
+ switchport access vlan 10
+ switchport nonegotiate
+ ! Port Security Hardening
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+exit
+
+! --- Departmental Access Ports: VLAN 20 (Finance) ---
+interface range FastEthernet0/6 - 10
+ description ACCESS_FINANCE_WORKSTATIONS
+ switchport mode access
+ switchport access vlan 20
+ switchport nonegotiate
+ ! Port Security Hardening
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+exit
+
+! --- Departmental Access Ports: VLAN 30 (IT & Infrastructure) ---
+interface range FastEthernet0/11 - 15
+ description ACCESS_IT_WORKSTATIONS_AND_SERVERS
+ switchport mode access
+ switchport access vlan 30
+ switchport nonegotiate
+ ! Port Security Hardening
+ switchport port-security
+ switchport port-security maximum 2
+ switchport port-security violation restrict
+ switchport port-security mac-address sticky
+exit
+
+! --- Unused Switchport Parking & Hardening ---
+interface range FastEthernet0/16 - 24, GigabitEthernet0/1 - 2
+ description UNUSED_PORTS_PARKED_BLACKHOLE
+ switchport mode access
+ switchport access vlan 999
+ shutdown
+exit
+
+! --- Management SVI (Switch Virtual Interface) ---
+interface Vlan99
+ description MANAGEMENT_SVI_VLAN99
+ ip address 10.10.99.2 255.255.255.240
+ no shutdown
+exit
+
+! Default Gateway pointing to Router R1 subinterface g0/0.99
+ip default-gateway 10.10.99.1
+
+end
+write memory
