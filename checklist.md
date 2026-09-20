@@ -1,7 +1,7 @@
 # Project Progression Checklist
 
 **Project:** Northstar Services CCNA Network Lab  
-**Current Overall Status:** **In Progress (Design & Specification Phase Completed; Lab Implementation Pending)**
+**Current Overall Status:** **In Progress (Design, Specifications, & IOS Config Scripts Completed; Lab Simulation Execution Pending)**
 
 ---
 
@@ -43,12 +43,13 @@
 - [ ] **Planned** — Execute Lab 05: Inject and troubleshoot Fault 02 (Trunk allowed-list omission)
 - [ ] **Planned** — Execute Lab 05: Inject and troubleshoot Fault 03 (Subinterface encapsulation mismatch)
 
-## 7. Evidence Capture & Verification
+## 7. Configuration Scripts & Evidence Framework
+- [x] **Completed** — Author ready-to-deploy Cisco IOS router and switch configuration scripts ([`configs/`](configs/))
 - [x] **Completed** — Establish evidence directory layout and naming standards ([`evidence/README.md`](evidence/README.md))
 - [ ] **Planned** — Save baseline `.pkt` file and export topology screenshot
 - [ ] **Planned** — Capture verified command outputs (`show vlan`, `show interfaces trunk`, `show ip route`)
 - [ ] **Planned** — Capture ping and traceroute connectivity logs
-- [ ] **Planned** — Sanitize and export final running configurations
+- [ ] **Planned** — Capture post-troubleshooting sanitized device outputs
 
 ## 8. Final Report & Documentation
 - [x] **Completed** — Establish final report structure ([`docs/final-report.md`](docs/final-report.md))
