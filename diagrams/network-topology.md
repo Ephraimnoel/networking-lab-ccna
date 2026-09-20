@@ -17,16 +17,16 @@ To maintain logical isolation, enhance traffic control, and contain broadcast do
 
 ```mermaid
 graph TD
-    subgraph WAN ["Simulated Edge & Perimeter"]
-        ISP["Simulated ISP / Edge Gateway<br/><code>192.0.2.1/30</code>"]
+    subgraph WAN ["Simulated Edge and Perimeter"]
+        ISP["Simulated ISP / Edge Gateway<br/>192.0.2.1/30"]
     end
 
     subgraph EdgeLayer ["Layer 3 Routing Core"]
-        R1["Edge Router: Northstar-R1<br/>Cisco 2911 / 1941<br/>WAN Interface: g0/1 (192.0.2.2/30)<br/>LAN Interface: g0/0 (802.1Q Subinterfaces)"]
+        R1["Edge Router: Northstar-R1<br/>Cisco 2911 / 1941<br/>WAN Interface: g0/1 - 192.0.2.2/30<br/>LAN Interface: g0/0 - 802.1Q Subinterfaces"]
     end
 
-    subgraph CoreSwitching ["Layer 2 Distribution & Access"]
-        SW1["Core Access Switch: Northstar-SW1<br/>Cisco Catalyst 2960-24TT<br/>Switch Management SVI: VLAN 99 (10.10.99.2/28)"]
+    subgraph CoreSwitching ["Layer 2 Distribution and Access"]
+        SW1["Core Access Switch: Northstar-SW1<br/>Cisco Catalyst 2960-24TT<br/>Switch Management SVI: VLAN 99 - 10.10.99.2/28"]
     end
 
     subgraph VLAN_Segments ["Departmental VLAN Segments"]
@@ -34,26 +34,26 @@ graph TD
             V10_NET["Subnet: 10.10.10.0/27<br/>Gateway: 10.10.10.1<br/>Access Ports: Fa0/2 - Fa0/5<br/>Endpoints: Admin-PC1, Admin-PC2"]
         end
 
-        subgraph V20 ["VLAN 20: Finance (Restricted)"]
+        subgraph V20 ["VLAN 20: Finance - Restricted"]
             V20_NET["Subnet: 10.10.20.0/28<br/>Gateway: 10.10.20.1<br/>Access Ports: Fa0/6 - Fa0/10<br/>Endpoints: Finance-PC1, Finance-PC2"]
         end
 
-        subgraph V30 ["VLAN 30: IT & Infrastructure"]
+        subgraph V30 ["VLAN 30: IT and Infrastructure"]
             V30_NET["Subnet: 10.10.30.0/27<br/>Gateway: 10.10.30.1<br/>Access Ports: Fa0/11 - Fa0/15<br/>Endpoints: IT-Admin-PC, Local-Services-Server"]
         end
 
-        subgraph V99 ["VLAN 99: Management & Native"]
+        subgraph V99 ["VLAN 99: Management and Native"]
             V99_NET["Subnet: 10.10.99.0/28<br/>Gateway: 10.10.99.1<br/>Management SVI: 10.10.99.2<br/>Dedicated Out-of-Band Admin"]
         end
     end
 
-    subgraph UnusedPorts ["Isolated / Blackhole Segment"]
-        V999["VLAN 999: Unused / Disabled<br/>Ports: Fa0/16 - Fa0/24, Gi0/1 - Gi0/2<br/>State: Administratively Shutdown"]
+    subgraph UnusedPorts ["Isolated Blackhole Segment"]
+        V999["VLAN 999: Unused - Disabled<br/>Ports: Fa0/16 - Fa0/24, Gi0/1 - Gi0/2<br/>State: Administratively Shutdown"]
     end
 
     %% Physical and Trunk Interconnections
     ISP ---|Simulated Serial/Gigabit| R1
-    R1 ===|802.1Q Trunk Link: g0/0 <--> Fa0/1<br/>VLANs 10, 20, 30, 99 (Native: 99)| SW1
+    R1 ===|"802.1Q Trunk Link: g0/0 to Fa0/1<br/>VLANs 10, 20, 30, 99 - Native: 99"| SW1
 
     %% Access Interconnections
     SW1 ---|Access Fa0/2 - Fa0/5| V10

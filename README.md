@@ -70,38 +70,38 @@ The network features a centralized router providing inter-VLAN routing and edge 
 
 ```mermaid
 graph TD
-    subgraph WAN ["Simulated Edge / WAN"]
-        ISP["Simulated ISP Gateway<br/><code>192.0.2.1/30</code>"]
+    subgraph WAN ["Simulated Edge and Perimeter"]
+        ISP["Simulated ISP Gateway<br/>192.0.2.1/30"]
     end
 
-    subgraph EdgeLayer ["Perimeter & Layer 3 Gateway"]
-        R1["Router: Northstar-R1<br/>Cisco 2911<br/>WAN: g0/1 (192.0.2.2/30)<br/>LAN: g0/0 (802.1Q Subinterfaces)"]
+    subgraph EdgeLayer ["Perimeter and Layer 3 Gateway"]
+        R1["Router: Northstar-R1<br/>Cisco 2911<br/>WAN: g0/1 - 192.0.2.2/30<br/>LAN: g0/0 - 802.1Q Subinterfaces"]
     end
 
-    subgraph CoreSwitching ["Layer 2 Distribution & Access"]
-        SW1["Switch: Northstar-SW1<br/>Cisco Catalyst 2960-24TT<br/>Management SVI: VLAN 99 (10.10.99.2/28)"]
+    subgraph CoreSwitching ["Layer 2 Distribution and Access"]
+        SW1["Switch: Northstar-SW1<br/>Cisco Catalyst 2960-24TT<br/>Management SVI: VLAN 99 - 10.10.99.2/28"]
     end
 
     subgraph VLAN_Segments ["Departmental VLAN Segments"]
         subgraph V10 ["VLAN 10: Administration"]
-            V10_NET["10.10.10.0/27 (GW: 10.10.10.1)<br/>Ports: Fa0/2 - Fa0/5<br/>Admin-PC1, Admin-PC2"]
+            V10_NET["10.10.10.0/27 - GW: 10.10.10.1<br/>Ports: Fa0/2 - Fa0/5<br/>Admin-PC1, Admin-PC2"]
         end
 
-        subgraph V20 ["VLAN 20: Finance (Restricted)"]
-            V20_NET["10.10.20.0/28 (GW: 10.10.20.1)<br/>Ports: Fa0/6 - Fa0/10<br/>Finance-PC1, Finance-PC2"]
+        subgraph V20 ["VLAN 20: Finance - Restricted"]
+            V20_NET["10.10.20.0/28 - GW: 10.10.20.1<br/>Ports: Fa0/6 - Fa0/10<br/>Finance-PC1, Finance-PC2"]
         end
 
-        subgraph V30 ["VLAN 30: IT & Infrastructure"]
-            V30_NET["10.10.30.0/27 (GW: 10.10.30.1)<br/>Ports: Fa0/11 - Fa0/15<br/>IT-PC, Local-Services-Server"]
+        subgraph V30 ["VLAN 30: IT and Infrastructure"]
+            V30_NET["10.10.30.0/27 - GW: 10.10.30.1<br/>Ports: Fa0/11 - Fa0/15<br/>IT-PC, Local-Services-Server"]
         end
 
-        subgraph V99 ["VLAN 99: Management & Native"]
-            V99_NET["10.10.99.0/28 (GW: 10.10.99.1)<br/>Switch SVI (10.10.99.2)<br/>Out-of-Band Management"]
+        subgraph V99 ["VLAN 99: Management and Native"]
+            V99_NET["10.10.99.0/28 - GW: 10.10.99.1<br/>Switch SVI: 10.10.99.2<br/>Out-of-Band Management"]
         end
     end
 
     ISP --- R1
-    R1 ===|802.1Q Trunk: g0/0 <--> Fa0/1<br/>Allowed: 10,20,30,99 (Native: 99)| SW1
+    R1 ===|"802.1Q Trunk: g0/0 to Fa0/1<br/>Allowed: 10, 20, 30, 99 - Native: 99"| SW1
     SW1 ---|Fa0/2 - Fa0/5| V10
     SW1 ---|Fa0/6 - Fa0/10| V20
     SW1 ---|Fa0/11 - Fa0/15| V30
